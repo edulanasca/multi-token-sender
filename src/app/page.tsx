@@ -1,95 +1,49 @@
-import Image from "next/image";
-import styles from "./page.module.css";
+"use client";
+
+import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
+import { useWallet } from "@solana/wallet-adapter-react";
+import { TokenTableContainer } from "@/app/components/TokenTableContainer";
+import { Toaster } from "@/components/ui/toaster";
+import { Box, Container, Heading, VStack, Text, Spinner } from "@chakra-ui/react";
 
 export default function Home() {
-  return (
-    <div className={styles.page}>
-      <main className={styles.main}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol>
-          <li>
-            Get started by editing <code>src/app/page.tsx</code>.
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
+  const { publicKey, connected, connecting } = useWallet();
 
-        <div className={styles.ctas}>
-          <a
-            className={styles.primary}
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className={styles.logo}
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-            className={styles.secondary}
-          >
-            Read our docs
-          </a>
-        </div>
-      </main>
-      <footer className={styles.footer}>
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
+  return (
+    <Box minH="100vh" bg="gray.50" py={8}>
+      <Container maxW="container.xl">
+        <VStack gap={8} align="stretch">
+          <Box textAlign="center">
+            <Heading as="h1" size="2xl" mb={4} color="gray.800">
+              Solana Multi Token Sender
+            </Heading>
+            <Text color="gray.600" mb={6}>
+              Send multiple tokens to any Solana address in one transaction
+            </Text>
+            <Box display="flex" justifyContent="center" mb={8}>
+              <WalletMultiButton />
+            </Box>
+          </Box>
+          
+          {connecting ? (
+            <Box display="flex" justifyContent="center" py={12}>
+              <Spinner size="xl" color="blue.500" />
+            </Box>
+          ) : connected && publicKey ? (
+            <Box bg="white" p={6} borderRadius="lg" boxShadow="sm">
+              <TokenTableContainer user={publicKey.toString()}/>
+            </Box>
+          ) : (
+            <Box textAlign="center" py={12}>
+              <Text color="gray.600">
+                Connect your wallet to view and send your tokens
+              </Text>
+            </Box>
+          )}
+          
+          <Toaster/>
+        </VStack>
+      </Container>
+    </Box>
   );
 }
